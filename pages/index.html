@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisuAI Research Agent - AI-Powered Research Data Visualization</title>
+    <meta name="description" content="Transform research data into stunning, publication-ready visualizations with AI. Built by Muhammad Yasir Imam.">
+    <meta name="author" content="Muhammad Yasir Imam">
+    <meta name="keywords" content="AI, visualization, research, data science, machine learning, XAI, charts, graphs">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔬</text></svg>">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --accent: #06b6d4;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+        }
+        .hero-content { max-width: 900px; }
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(37, 99, 235, 0.2);
+            border: 1px solid var(--primary);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--muted);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 50px rgba(37, 99, 235, 0.4);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        .stat-card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label { color: var(--muted); margin-top: 0.5rem; }
+
+        /* Features Section */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 4rem;
+            font-size: 1.1rem;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .feature-card {
+            background: var(--card);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        .feature-card:hover {
+            border-color: rgba(37, 99, 235, 0.3);
+            transform: translateY(-5px);
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent);
+        }
+        .feature-card p { color: var(--muted); }
+
+        /* Domains Section */
+        .domains-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .domain-card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .domain-card:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.1);
+        }
+        .domain-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+        .domain-card h4 { margin-bottom: 0.5rem; }
+        .domain-card p { color: var(--muted); font-size: 0.9rem; }
+
+        /* Code Section */
+        .code-block {
+            background: #0d1117;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+        .code-block pre {
+            color: #e6edf3;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .code-block .comment { color: #8b949e; }
+        .code-block .keyword { color: #ff7b72; }
+        .code-block .string { color: #a5d6ff; }
+        .code-block .function { color: #d2a8ff; }
+
+        /* Author Section */
+        .author-section {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+            border-radius: 24px;
+            padding: 4rem;
+            margin: 4rem auto;
+            max-width: 1000px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .author-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem;
+        }
+        .author-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .author-title {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .author-bio {
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        .author-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+        .author-stat {
+            text-align: center;
+        }
+        .author-stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .author-stat-label {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .social-link {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .social-link:hover {
+            background: rgba(37, 99, 235, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--muted);
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1rem; }
+            .nav-links { display: none; }
+            .author-section { padding: 2rem; }
+            .author-stats { gap: 1.5rem; }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">🔬 VisuAI</a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#domains">Domains</a></li>
+                <li><a href="#quickstart">Quick Start</a></li>
+                <li><a href="#author">Author</a></li>
+                <li><a href="https://github.com/muhammadyasirimam/visuai-research-agent">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">🚀 v1.0.0 Now Available</div>
+            <h1>VisuAI Research Agent</h1>
+            <p>Transform your research data into stunning, publication-ready visualizations with AI. From raw datasets to insightful charts in seconds — no coding required.</p>
+            <div class="hero-buttons">
+                <a href="https://github.com/muhammadyasirimam/visuai-research-agent" class="btn btn-primary">⭐ Star on GitHub</a>
+                <a href="#quickstart" class="btn btn-secondary">📖 Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Chart Types</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">5</div>
+            <div class="stat-label">Research Domains</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">7</div>
+            <div class="stat-label">Export Formats</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">XAI Methods</div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <h2 class="section-title">✨ Powerful Features</h2>
+        <p class="section-subtitle">Everything you need to make your research data tell its story</p>
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Agent Orchestration</h3>
+                <p>Multi-agent system that analyzes, visualizes, explains, and exports your data automatically. Just describe what you need in natural language.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🧠</div>
+                <h3>Domain Intelligence</h3>
+                <p>Specialized modes for Machine Learning, Healthcare, Finance, Social Science, and Engineering. Each domain has tailored charts and statistical tests.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🔍</div>
+                <h3>XAI Integration</h3>
+                <p>Built-in SHAP, LIME, and Permutation Importance explanations. Make your AI models transparent and interpretable for research publications.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">📄</div>
+                <h3>Publication Export</h3>
+                <p>Export to LaTeX, PDF, HTML, Jupyter, PowerPoint, and Markdown. Your visualizations are ready for journals, conferences, and presentations.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">💬</div>
+                <h3>Chat with Data</h3>
+                <p>Ask questions about your dataset in natural language. "What is the correlation between X and Y?" — get instant answers with visualizations.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🌐</div>
+                <h3>Web Interface</h3>
+                <p>Launch a beautiful Streamlit web app with one command. Upload data, generate visualizations, and chat — all in your browser.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Domains Section -->
+    <section class="section" id="domains">
+        <h2 class="section-title">🎯 Research Domains</h2>
+        <p class="section-subtitle">Specialized visualizations tailored to your field</p>
+        <div class="domains-grid">
+            <div class="domain-card fade-in">
+                <div class="domain-icon">🤖</div>
+                <h4>Machine Learning</h4>
+                <p>Confusion matrices, ROC curves, SHAP plots, learning curves, feature importance</p>
+            </div>
+            <div class="domain-card fade-in">
+                <div class="domain-icon">🏥</div>
+                <h4>Healthcare</h4>
+                <p>Kaplan-Meier curves, survival analysis, clinical heatmaps, genomic visualizations</p>
+            </div>
+            <div class="domain-card fade-in">
+                <div class="domain-icon">💰</div>
+                <h4>Finance</h4>
+                <p>Candlestick charts, efficient frontier, VaR analysis, correlation matrices</p>
+            </div>
+            <div class="domain-card fade-in">
+                <div class="domain-icon">🌍</div>
+                <h4>Social Science</h4>
+                <p>Network graphs, choropleth maps, survey visualizations, sentiment analysis</p>
+            </div>
+            <div class="domain-card fade-in">
+                <div class="domain-icon">🔬</div>
+                <h4>Engineering</h4>
+                <p>Signal processing, 3D meshes, FFT plots, stress-strain curves</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section class="section" id="quickstart">
+        <h2 class="section-title">🚀 Quick Start</h2>
+        <p class="section-subtitle">Get up and running in 3 lines of code</p>
+
+        <div class="code-block">
+            <pre><span class="comment"># 1. Install VisuAI</span>
+<span class="keyword">pip</span> install visuai-research-agent
+
+<span class="comment"># 2. Import and initialize</span>
+<span class="keyword">from</span> visuai <span class="keyword">import</span> ResearchAgent
+
+agent = ResearchAgent(domain=<span class="string">"machine_learning"</span>)
+
+<span class="comment"># 3. Load data and generate visualizations</span>
+agent.load_data(<span class="string">"your_data.csv"</span>)
+result = agent.run(query=<span class="string">"Show me feature correlations and distributions"</span>)
+
+<span class="comment"># 4. View and save results</span>
+result.show()
+result.save(<span class="string">"./output"</span>)</pre>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="https://github.com/muhammadyasirimam/visuai-research-agent/blob/main/examples/demo.py" class="btn btn-primary">📥 Download Full Demo</a>
+        </div>
+    </section>
+
+    <!-- Author Section -->
+    <section class="author-section" id="author">
+        <div class="author-avatar">👨‍🔬</div>
+        <div class="author-name">Muhammad Yasir Imam</div>
+        <div class="author-title">Gold Medalist | Award-Winning Researcher | Published Author</div>
+        <div class="author-bio">
+            From a mud house in a poor village in Pakistan to a 4.0 CGPA Gold Medalist in Software Engineering. 
+            19 Google Scholar citations, 1,710 ResearchGate reads, 20+ publications, and a published book on Amazon. 
+            Building AI tools that make research accessible to everyone.
+        </div>
+        <div class="author-stats">
+            <div class="author-stat">
+                <div class="author-stat-number">19</div>
+                <div class="author-stat-label">Citations</div>
+            </div>
+            <div class="author-stat">
+                <div class="author-stat-number">20+</div>
+                <div class="author-stat-label">Publications</div>
+            </div>
+            <div class="author-stat">
+                <div class="author-stat-number">4.0</div>
+                <div class="author-stat-label">CGPA</div>
+            </div>
+            <div class="author-stat">
+                <div class="author-stat-number">1</div>
+                <div class="author-stat-label">Book Published</div>
+            </div>
+        </div>
+        <div class="social-links">
+            <a href="https://github.com/muhammadyasirimam" class="social-link">🐙 GitHub</a>
+            <a href="https://scholar.google.com/citations?user=b80oc1UAAAAJ" class="social-link">📚 Google Scholar</a>
+            <a href="https://www.researchgate.net/profile/Muhammad-Yasir-Imam" class="social-link">🔬 ResearchGate</a>
+            <a href="https://orcid.org/0000-0002-7495-4179" class="social-link">🆔 ORCID</a>
+            <a href="https://linkedin.com/in/muhammadyasirimam" class="social-link">💼 LinkedIn</a>
+            <a href="https://medium.com/@muhammadyasirimam" class="social-link">✍️ Medium</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Built with ❤️ by <strong>Muhammad Yasir Imam</strong></p>
+        <p>VisuAI Research Agent v1.0.0 | MIT License</p>
+        <p>From a mud house in Pakistan to the world of open-source AI research tools 🌍</p>
+        <p style="margin-top: 1rem;">
+            <a href="https://github.com/muhammadyasirimam/visuai-research-agent">GitHub</a> • 
+            <a href="https://muhammadyasirimam.github.io">Portfolio</a> • 
+            <a href="mailto:imammuhammadyasir@gmail.com">Email</a>
+        </p>
+    </footer>
+
+    <script>
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

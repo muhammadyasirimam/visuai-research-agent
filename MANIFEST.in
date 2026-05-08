@@ -1,0 +1,11 @@
+include README.md
+include LICENSE
+include requirements.txt
+include setup.py
+include pyproject.toml
+include .env.example
+recursive-include src/visuai/templates *.html *.tex *.pptx
+recursive-include src/visuai/assets *.png *.css
+recursive-include src/visuai/config *.yaml
+recursive-include docs *.md *.rst
+recursive-include examples *.py *.ipynb *.csv

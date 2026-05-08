@@ -1,0 +1,60 @@
+site_name: VisuAI Research Agent
+site_url: https://muhammadyasirimam.github.io/visuai-research-agent
+site_author: Muhammad Yasir Imam
+site_description: AI-Powered Research Data Visualization Documentation
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: blue
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: blue
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/muhammadyasirimam
+    - icon: fontawesome/brands/google-scholar
+      link: https://scholar.google.com/citations?user=b80oc1UAAAAJ
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/muhammadyasirimam
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: installation.md
+    - Quick Start: quickstart.md
+    - Configuration: configuration.md
+  - User Guide:
+    - Basic Usage: usage.md
+    - CLI Commands: cli.md
+    - Web Interface: web.md
+    - API: api.md
+  - Advanced:
+    - Custom Domains: domains.md
+    - XAI Integration: xai.md
+    - Export Formats: export.md
+  - Development:
+    - Contributing: contributing.md
+    - Architecture: architecture.md
+    - Testing: testing.md
+  - About:
+    - Author: author.md
+    - Changelog: changelog.md
+    - License: license.md
