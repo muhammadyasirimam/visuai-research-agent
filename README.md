@@ -10,7 +10,7 @@
 [![ResearchGate](https://img.shields.io/badge/ResearchGate-1,710%20Reads-00CCBB)](https://www.researchgate.net/profile/Muhammad-Yasir-Imam)
 [![Google Scholar](https://img.shields.io/badge/Google%20Scholar-19%20Citations-4285F4)](https://scholar.google.com/citations?user=b80oc1UAAAAJ)
 
-<img src="assets/images/banner.png" alt="VisuAI Banner" width="800"/>
+**VisuAI**
 
 **An AI-powered autonomous agent that transforms raw research datasets into publication-ready, interactive visualizations — tailored to your research domain, methodology, and audience.**
 
